@@ -6,7 +6,8 @@ output:
     keep_md: true
 ---
 
-## Preparation: forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
+## Preparation
+### forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
 
 ## Loading and preprocessing the data
 
@@ -158,7 +159,7 @@ weekly_trends <- merge(mean_activityImputed_weekdays, mean_activityImputed_weeke
 # generate panel plot for weekends and weekdays
 library(lattice)
 
-xyplot(meanSteps ~ interval | week , data=weekly_trends, type="l")
+xyplot(meanSteps ~ interval | week , data=weekly_trends, type="l", layout=c(1,2), ylab="Number of steps", xlab="Interval")
 
 
 ```

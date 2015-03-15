@@ -1,7 +1,8 @@
 # Reproducible Research: Peer Assessment 1
 
 
-## Preparation: forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
+## Preparation
+### forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
 
 ## Loading and preprocessing the data
 
@@ -214,13 +215,41 @@ median(activityImputed$steps, na.rm=TRUE)
 
 ```r
 # add new factor to distinguish weekends & weekdays
-week_pattern <- factor(weekdays(as.Date(activity$date)) %in% c("Saturday", "Sunday"))
+week_pattern <- factor(weekdays(as.Date(activityImputed$date)) %in% c("Saturday", "Sunday"))
 levels(week_pattern)<- c("weekday", "weekend")  # false == 0 == weekday; true == 1 == weekend
 
-activity$week <- week_pattern
+activityImputed$week <- week_pattern
+
+# seperate average per interval for weekends and weekday 
+
+weekend_activity <- activityImputed[activityImputed$week=="weekend",]
+weekday_activity <- activityImputed[activityImputed$week =="weekday",]
+
+
+mean_activityImputed_weekends <- summarise(group_by(weekend_activity, interval), meanSteps=mean(steps))
+
+
+
+mean_activityImputed_weekdays <- summarise(group_by(weekday_activity, interval), meanSteps=mean(steps))
+
+# add column for weekend/weekday factors (used later in merged dataframe)
+mean_activityImputed_weekends$week <- as.factor("weekend")
+mean_activityImputed_weekdays$week <- as.factor("weekday")
+
+
+# create dataframe for convenient plotting
+#weekly_trends <- data.frame(interval=activityImputed)
+
+weekly_trends <- merge(mean_activityImputed_weekdays, mean_activityImputed_weekends, all=TRUE)
+
 
 # generate panel plot for weekends and weekdays
+library(lattice)
+
+xyplot(meanSteps ~ interval | week , data=weekly_trends, type="l", layout=c(1,2), ylab="Number of steps", xlab="Interval")
 ```
+
+![](PA1_template_files/figure-html/weekpatterns-1.png) 
 
 ## References
 https://github.com/rdpeng/RepData_PeerAssessment1/blob/master/README.md
