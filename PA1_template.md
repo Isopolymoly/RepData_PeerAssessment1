@@ -2,7 +2,7 @@
 
 
 ## Preparation
-### forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
+### forked and cloned RepData_PeerAssesment1 rep, and unzipped activity.zip
 
 ## Loading and preprocessing the data
 
@@ -184,6 +184,7 @@ summary(activityImputed)
 ##                   (Other)   :15840
 ```
 
+
    
 
 ```r
@@ -210,6 +211,8 @@ median(activityImputed$steps, na.rm=TRUE)
 ```
 ## [1] 0
 ```
+Replacing NA values with the interval's mean (averaged across all days) did not affect the mean or median values, and also did not affect the minimum and maximum.   It did skew the data somewhat, increasing the third quartile value from 12 to 27.  
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
@@ -252,9 +255,11 @@ xyplot(meanSteps ~ interval | week , data=weekly_trends, type="l", layout=c(1,2)
 ![](PA1_template_files/figure-html/weekpatterns-1.png) 
 
 ## References
-https://github.com/rdpeng/RepData_PeerAssessment1/blob/master/README.md
- http://stackoverflow.com/questions/4827930/how-to-show-indexes-of-nas
- http://stackoverflow.com/questions/14634964/how-does-one-change-the-levels-of-a-factor-column-in-a-data-table
+*  Reproducible Research class notes & videos
+* https://github.com/rdpeng/RepData_PeerAssessment1/blob/master/README.md
+*  http://stackoverflow.com/questions/4827930/how-to-show-indexes-of-nas
+* http://stackoverflow.com/questions/14634964/how-does-one-change-the-levels-of-a-factor-column-in-a-data-table
+* http://www.stat.berkeley.edu/~summer/Day1/LatticeGGobi.pdf
 
 
 
