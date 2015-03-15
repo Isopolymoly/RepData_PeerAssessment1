@@ -1,23 +1,37 @@
+# Reproducible Research: Peer Assessment 1
 
----
-title: "Reproducible Research: Peer Assessment 1"
-output: 
-  html_document:
-    keep_md: true
----
 
 ## Preparation: forked and cloned RepData_PeerAssesment1 rep, and unzipped 'activity'
 
 ## Loading and preprocessing the data
 
-```{r loading_and_processing}
+
+```r
 activity <- read.csv('activity/activity.csv')
 
 str(activity)
+```
 
+```
+## 'data.frame':	17568 obs. of  3 variables:
+##  $ steps   : int  NA NA NA NA NA NA NA NA NA NA ...
+##  $ date    : Factor w/ 61 levels "2012-10-01","2012-10-02",..: 1 1 1 1 1 1 1 1 1 1 ...
+##  $ interval: int  0 5 10 15 20 25 30 35 40 45 ...
+```
+
+```r
 summary(activity)
+```
 
-
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 12.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##  NA's   :2304     (Other)   :15840
 ```
 
 
@@ -32,16 +46,30 @@ summary(activity)
 ###Calculate and report the mean and median total number of steps taken per day
  -->   
     
-```{r numberofsteps}
+
+```r
 # generate histogram of number of steps
 hist(activity$steps)
+```
 
+![](PA1_template_files/figure-html/numberofsteps-1.png) 
 
+```r
 # calculate the mean number of steps (ignoring NAs):
 mean(activity$steps, na.rm=TRUE)
+```
 
+```
+## [1] 37.3826
+```
+
+```r
 # calculate the median number of steps (ignoring NAs):
 median(activity$steps, na.rm=TRUE)
+```
+
+```
+## [1] 0
 ```
 
 
@@ -51,11 +79,27 @@ median(activity$steps, na.rm=TRUE)
     Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps? -->
 
 ## What is the average daily activity pattern?
-```{r dailypattern}
 
+```r
 # calculate the average number of steps taken in each interval, averaged across all recorded days
 require(dplyr)
+```
 
+```
+## Loading required package: dplyr
+## 
+## Attaching package: 'dplyr'
+## 
+## The following object is masked from 'package:stats':
+## 
+##     filter
+## 
+## The following objects are masked from 'package:base':
+## 
+##     intersect, setdiff, setequal, union
+```
+
+```r
 mean_steps_per_interval <- summarise(group_by(activity, interval), m=mean(steps, na.rm=TRUE))
 
 # plot mean steps per interval
@@ -63,23 +107,33 @@ plot(mean_steps_per_interval$m ~ mean_steps_per_interval$interval, type="l",
      main="Daily Activity Pattern", xlab="interval", ylab="mean # steps (across all days)"
      )
 grid()
+```
 
+![](PA1_template_files/figure-html/dailypattern-1.png) 
 
+```r
 # calculate interval with maximum # steps, averaged across all recorded days
 mean_steps_per_interval$interval[mean_steps_per_interval$m == max(mean_steps_per_interval$m, na.rm=TRUE)]
+```
 
+```
+## [1] 835
 ```
 
 ## Imputing missing values
 
 
-```{r imputingNAs}
 
-
+```r
 # calculate the total number observations (rows) with missing values
  sum(!complete.cases(activity))
+```
 
+```
+## [1] 2304
+```
 
+```r
 # strategy for imputing missing values: replace NA values with mean value for that interval
 
 
@@ -107,25 +161,58 @@ activityImputed$steps <- replace(activity$steps, na_indices, replacements)
 
 # 4. double-check for missing values
 anyNA(activityImputed)
+```
 
+```
+## [1] FALSE
+```
+
+```r
 # 5. compare stats to original summary
 summary(activityImputed)
 ```
 
+```
+##      steps                date          interval     
+##  Min.   :  0.00   2012-10-01:  288   Min.   :   0.0  
+##  1st Qu.:  0.00   2012-10-02:  288   1st Qu.: 588.8  
+##  Median :  0.00   2012-10-03:  288   Median :1177.5  
+##  Mean   : 37.38   2012-10-04:  288   Mean   :1177.5  
+##  3rd Qu.: 27.00   2012-10-05:  288   3rd Qu.:1766.2  
+##  Max.   :806.00   2012-10-06:  288   Max.   :2355.0  
+##                   (Other)   :15840
+```
+
    
-```{r numberofstepsimputed}
+
+```r
 # generate histogram with imputed-data dataset
 hist(activityImputed$steps)
+```
 
+![](PA1_template_files/figure-html/numberofstepsimputed-1.png) 
+
+```r
 # calculate mean number of steps (ignoring NAs):
 mean(activityImputed$steps, na.rm=TRUE)
+```
 
+```
+## [1] 37.3826
+```
+
+```r
 # Median number of steps (ignoring NAs):
 median(activityImputed$steps, na.rm=TRUE)
 ```
 
+```
+## [1] 0
+```
+
 ## Are there differences in activity patterns between weekdays and weekends?
-```{r weekpatterns}
+
+```r
 # add new factor to distinguish weekends & weekdays
 week_pattern <- factor(weekdays(as.Date(activity$date)) %in% c("Saturday", "Sunday"))
 levels(week_pattern)<- c("weekday", "weekend")  # false == 0 == weekday; true == 1 == weekend
